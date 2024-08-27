@@ -1,5 +1,4 @@
 root:gkomba
 gildokomba:teste
-exit:exit
 bastocalv:teste
 thanos inevitavel:hahaha

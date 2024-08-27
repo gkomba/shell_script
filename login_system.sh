@@ -2,18 +2,22 @@
 
 #variables
 USERS_FILE=".users_file.txt"
-ADM_FILE="root_file.txt"
+ADM_FILE=".root_log_file.txt"
 USER_FOUND=false
 
 #funtions
 root_home(){
+    LOG=`date +%d%m%y%T`
+    echo "${LOG}" >> "${ADM_FILE}" 
     echo "$ #######################"
     echo "$ ######### root ########"
     echo "$ #######################"
     echo "$ --"
     echo "$ Delete User > 1"
     echo "$ Back Home   > 2"
-    echo "$ List User     > 3"
+    echo "$ List User   > 3"
+    echo "$ Upgrade && update System packages > 4"
+    echo "$ Insert Mode >  5"
     echo "$ --"
     read -p "$ " OPTION_1
 
@@ -24,7 +28,8 @@ root_home(){
         if [ "$USER_DELETE" = "root" ]; then
             echo "$ This User Cannot Be Deleted"
             echo "$ Canceled"
-            sleep 0.10
+            echo "$ Press ENTER to continue"
+            read
             clear
             USER_DELETE=0
             root_home
@@ -37,7 +42,8 @@ root_home(){
                 sleep 1s
                 ./user_delete $USER_DELETE
                 echo "$ USER DELETED SUCCESS"
-                sleep 0.50
+                echo "$ Press ENTER to continue"
+                read
                 clear
                 root_home
             else
@@ -56,9 +62,33 @@ root_home(){
         sleep 0.10
         clear
         echo "$ LIST OF USERS"
-        USERS_LISTED=$(cut -d':' -f2 "${USERS_FILE}")
-        echo "$ ${USERS_LISTED}"
-        exit
+        USERS_LISTED=$(cut -d':' -f1 "${USERS_FILE}")
+        echo "${USERS_LISTED}"
+        echo "$ Press enter to continue"
+        read
+        clear
+        root_home
+    elif [ "${OPTION_1}" = 4 ]; then
+        sudo apt update
+        sudo apt upgrade
+        echo "Packages Updated"
+        echo "Press ENTER to continue"
+        read
+        clear
+        root_home
+    elif [ "${OPTION_1}" = "exit" ]; then
+        clear
+        exit 0
+    elif [ "${OPTION_1}" = 5 ]; then
+        sh
+        clear
+        root_home
+    else
+        echo "Invalid Option"
+        echo "Press ENTER to continue"
+        read
+        clear
+        root_home
     fi
 }
 
@@ -82,7 +112,6 @@ login(){
     fi
     echo "password:"
     read -s PASS_INPUT
-
 
     while IFS=: read -r USER PASS; do
         if [[ "${USER_INPUT}" == "${USER}" && "${PASS_INPUT}" == "${PASS}" ]]; then
@@ -115,7 +144,6 @@ login(){
 }
 
 creat_new_user() {
-
     if [ -f $USERS_FILE ]; then
         echo ""
     else 
@@ -144,7 +172,8 @@ creat_new_user() {
     read -s NEW_PASS
     echo "$NEW_USER_F $NEW_USER_L:$NEW_PASS" >> "$USERS_FILE"
     echo "Usuário criado com sucesso!"
-    sleep 0.9s
+    echo "Press ENTER to continue"
+    read
     clear
     display
 }
@@ -161,17 +190,17 @@ echo "----------| Exit  |-----------"
 echo "------------>> 4 <<-----------"
 read -p ">> " OPTIONS
 
-if [ $OPTIONS = 1 ]; then
+if [ "${OPTIONS}" = 1 ]; then
     clear
     login
-elif [ $OPTIONS = 2 ]; then
+elif [ "${OPTIONS}" = 2 ]; then
     clear
     creat_new_user
-elif [ $OPTIONS = 3 ]; then
+elif [ "${OPTIONS}" = 3 ]; then
     sleep 0.5s
     clear
     echo "help"
-elif [ $OPTIONS = 4 ]; then
+elif [ "${OPTIONS}" = 4 ]; then
     echo "BYE"
     exit
 else
